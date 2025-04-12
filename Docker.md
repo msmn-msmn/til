@@ -5,7 +5,8 @@
 　　`docker compose build`
 　　で新しいコンテナを生成する
 
-　　★`Cannot connect to the Docker daemon at unix:///var/run/docker.sock. Is the docker daemon running?`が出てdocker関連のコマンドが実行できない時
+　　★`Cannot connect to the Docker daemon at unix:///var/run/docker.sock. Is the docker daemon running?`が出て
+  　　 docker関連のコマンドが実行できない時
 　　　●対処法
 　　　　Dockerのデスクトップアプリを再インストールする
 　　　　※RailsのDBがアンインストールで消えてしまうので
