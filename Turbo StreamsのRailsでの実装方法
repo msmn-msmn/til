@@ -71,11 +71,20 @@
 
 ◎Turbo Streamsの7つのアクション+CSSの指定方法
 ❇️Append
-　対象のidを持つ要素の内側の一番お尻に要素を追加します。
+　Appendアクションは、指定した要素の内部に新しいコンテンツを追加します。
+　具体的には、以下のように使用します。
+　　　<%= turbo_stream.append "comments" do %>
+ 　　　 <%= render @comment %>
+　　　<% end %>
+　このコードは、comments という ID を持つ要素の内部に、@comment の部分テンプレートを追加します。
+　これにより、新しいコメントがリストの最後に追加されます。
+　Appendアクションは、新しい要素を既存のコンテンツの後に追加する際に使用します。
+　
+　対象のidを持つ要素の内側の一番お尻に要素を追加します。↓
 
 　　<%= turbo_stream.append "posts", partial: "post", locals: { post: @post } %>
-　パーシャルを使わない場合こんな感じで書けます。
-
+　
+　パーシャルを使わない場合こんな感じで書けます。↓
 　　<%= turbo_stream.append "posts" do %>
 　　  <div id="<%= dom_id @post %>">
  　　   <%= @post.body %>
@@ -85,34 +94,62 @@
 　　<% end %>
 
 ❇️Prepend
-　対象のidを持つ要素の内側の先頭に要素を追加します。
-
-　　<%= turbo_stream.prepend "posts", partial: "post", locals: { post: @post } %>
+  Prepend アクションは、指定した要素の内部の最初に新しいコンテンツを追加します。
+  具体的には、以下のように使用します。
+　　　<%= turbo_stream.prepend "comments" do %>
+ 　　　 <%= render @comment %>
+　　　<% end %>
+　このコードは、comments という ID を持つ要素の内部の最初に、@comment の部分テンプレートを追加します。
+　これにより、新しいコメントがリストの先頭に追加されます。
+　Prepend アクションは、新しい要素を既存のコンテンツの前に追加する際に使用します。
+　
 
 ❇️Replace
-　対象のidを持つ要素自体を置き換えます。
-
-　　<%= turbo_stream.replace "post_#{@post.id}", partial: "post", locals: { post: @post } %>
+　Replace アクションは、指定した要素を完全に置き換えます。具体的には、以下のように使用します。
+　　　<%= turbo_stream.replace "comment_#{@comment.id}" do %>
+ 　　　 <%= render @comment %>
+　　　<% end %>
+　このコードは、comment_#{@comment.id} という ID を持つ要素を、@comment の部分テンプレートで置き換えます。
+　これにより、編集後のコメントが元のコメントと入れ替わります。
+　Replaceアクションは、既存の要素を新しい内容で置き換える際に使用します。
 
 ❇️Update
-　対象のidを持つ要素の中身を書き換えます。
-
-　　<%= turbo_stream.update "posts", partial: "post", locals: { post: @post } %>
+　Update アクションは、指定した要素の内容を更新します。
+　具体的には、以下のように使用します。
+　　　<%= turbo_stream.update "comment_likes_#{@comment.id}" do %>
+　　　  <%= @comment.likes_count %>
+　　　<% end %>
+　このコードは、comment_likes_#{@comment.id} という ID を持つ要素の内容を、@comment.likes_count で更新します。
+　これにより、いいね数がリアルタイムで更新されます。
+　Updateアクションは、既存の要素の内容を部分的に更新する際に使用します。
 
 ❇️Remove
-　対象のidを持つ要素を取り除きます。
-
-　　<%= turbo_stream.remove "post_#{@post.id}" %>
+　Remove アクションは、指定した要素を削除します。
+　具体的には、以下のように使用します。
+　　　<%= turbo_stream.remove "comment_#{@comment.id}" %>
+　このコードは、comment_#{@comment.id} という ID を持つ要素を削除します。
+　これにより、指定したコメントが DOM から削除されます。
+　Remove アクションは、不要になった要素を DOM から取り除く際に使用します 。
 
 ❇️Before
-　指定した要素の直前に要素を追加します。
-
-　　<%= turbo_stream.before "posts", partial: "form", locals: { post: @post } %>
+　Before アクションは、指定した要素の直前に新しいコンテンツを追加します。
+　具体的には、以下のように使用します。
+　　　<%= turbo_stream.before "comment_#{@comment.id}" do %>
+  　　　<%= render @new_comment %>
+　　　<% end %>
+　このコードは、comment_#{@comment.id} という ID を持つ要素の直前に、
+　@new_comment の部分テンプレートを追加します。これにより、新しいコメントが指定した位置の前に追加されます。
+　Before アクションは、特定の要素の前に新しい要素を追加する際に使用します。
 
 ❇️After
-　指定した要素の直後に要素を追加します。
-
-　　<%= turbo_stream.after "posts", partial: "form", locals: { post: @post } %>
+　After アクションは、指定した要素の直後に新しいコンテンツを追加します。
+　具体的には、以下のように使用します。
+　　　<%= turbo_stream.after "comment_#{@comment.id}" do %>
+ 　　　 <%= render @new_comment %>
+　　　<% end %>
+　このコードは、comment_#{@comment.id} というIDを持つ要素の直後に、
+　@new_comment の部分テンプレートを追加します。これにより、新しいコメントが指定した位置の後に追加されます。
+　After アクションは、特定の要素の後に新しい要素を追加する際に使用します。
 
 ◎class属性を指定する方法
 　アクション名+_allを使うとclass指定することが出来ます。
