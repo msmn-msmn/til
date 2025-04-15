@@ -1,0 +1,128 @@
+★Turbo StreamsをRailsのアプリで実装する
+◎前提条件
+　下記条件はRails7系でrails newを行うと勝手に設定されていると思います
+
+  turbo-railsgemがインストールされていること(viewでturbo_streamを使いやすくなります。
+  (入っていなければインストールしてください)
+  app/javascript/application.jsでturboを使う設定が出来ていること
+
+◎実装方法
+　ViewからTURBO_STREAMリクエストを送る
+　getリクエストを送るリンクの場合下記のようにdata: { turbo_stream: true }をつけると
+　コントローラーでturbo_streamのリクエストとして受け取ることが出来るようになります。
+
+　　<%= link_to 'Edit', edit_post_path(post), data: { turbo_stream: true } %>
+　get以外のリクエストの場合下記のようにdata-turbo_methodを指定することでturbo_streamのリクエストを送れます。
+
+ 　 <%= link_to 'Destroy', post, data: { turbo_confirm: 'Are you sure?', turbo_method: :delete } %>
+　サーバーログに下記のようなログが出ていればOKです。
+
+　　Processing by PostsController#edit as TURBO_STREAM
+　　Controllerの設定
+　　Controllerの設定は特に必要ありません。
+
+　ViewからTURBO_STREAMのリクエストを送れていればアクション名と対応するaction名.turbo_stream.erbファイルを探してくれます。
+
+　　def edit
+　　  @post = Post.find(params[:id])
+ 　　 # render :editは書かなくてもedit.turbo_stream.erbファイルを探してくれる
+　　end
+　または、下記のようにrender turbo_stream: turbo_streamの構文でコントローラー側で実装することも出来ます
+
+　　def edit
+　　  @post = Post.find(params[:id])
+ 　　 render turbo_stream: turbo_stream.replace("post_#{@post.id}", partial: "form", locals: { post: @post })
+　　end
+
+◎Turbo Streams用のViewを用意する
+　turbo-railsではturbo_stream.アクション 対象要素のID, partial: 表示したい部分テンプレート, locals: 部分テンプレートで使いたい変数のような形でTurbo Streams用のViewファイルを記述することが出来ます。
+
+　　<%= turbo_stream.update "post_#{@post.id}", partial: "form", locals: { post: @post } %>
+　またはパーシャルを指定せずに下記のように直接Erbを記述することが出来ます。
+
+　　<%= turbo_stream.update "post_#{@post.id}" do %>
+　　  <%= form_with model: @post do |f| %>
+  　　  <%= f.text_field :body %>
+  　　  <%= f.submit %>
+　　  <% end %>
+　　<% end %>
+　これは下記のように解釈されブラウザに送られます。
+　下記の要素がブラウザでキャッチされるとapplication.jsで設定したHotwireが動いてDOMを更新したり、
+　削除したりする操作をしてくれます。
+
+　　<turbo-stream action="アクション" target="対象要素のID">
+　　  <template>
+  　　  パーシャルで指定した内容
+　　  </template>
+　　</turbo-stream>
+　ブラウザのネットワークタブを確認すると上記の形式でレスポンスが返ってきているのを確認できます。
+　※サンプルコードを簡略化するためHTMLの属性を削っているのでstyleとかが入っています。
+
+◎複数のturbo_stream
+　turbo_streamで複数の処理を行いたいときは下記のように一つのViewに複数のturbo_streamの処理を書くことができます。
+
+　　<%= turbo_stream.replace "post_form_#{@post.id}", partial: "form", locals: { post: @post } %>
+
+　　<%= turbo_stream.append "error_messages_#{@post.id}" do %>
+　　  <% @post.errors.full_messages.each do |message| %>
+　　    <%= message %>
+　　  <% end %>
+　　<% end %>
+
+◎Turbo Streamsの7つのアクション+CSSの指定方法
+❇️Append
+　対象のidを持つ要素の内側の一番お尻に要素を追加します。
+
+　　<%= turbo_stream.append "posts", partial: "post", locals: { post: @post } %>
+　パーシャルを使わない場合こんな感じで書けます。
+
+　　<%= turbo_stream.append "posts" do %>
+　　  <div id="<%= dom_id @post %>">
+ 　　   <%= @post.body %>
+　　    <%= link_to 'Edit', edit_post_path(@post), data: { turbo_stream: true } %>
+ 　　   <%= link_to 'Destroy', @post, data: { turbo_confirm: 'Are you sure?', turbo_method: :delete } %>
+　　  </div>
+　　<% end %>
+
+❇️Prepend
+　対象のidを持つ要素の内側の先頭に要素を追加します。
+
+　　<%= turbo_stream.prepend "posts", partial: "post", locals: { post: @post } %>
+
+❇️Replace
+　対象のidを持つ要素自体を置き換えます。
+
+　　<%= turbo_stream.replace "post_#{@post.id}", partial: "post", locals: { post: @post } %>
+
+❇️Update
+　対象のidを持つ要素の中身を書き換えます。
+
+　　<%= turbo_stream.update "posts", partial: "post", locals: { post: @post } %>
+
+❇️Remove
+　対象のidを持つ要素を取り除きます。
+
+　　<%= turbo_stream.remove "post_#{@post.id}" %>
+
+❇️Before
+　指定した要素の直前に要素を追加します。
+
+　　<%= turbo_stream.before "posts", partial: "form", locals: { post: @post } %>
+
+❇️After
+　指定した要素の直後に要素を追加します。
+
+　　<%= turbo_stream.after "posts", partial: "form", locals: { post: @post } %>
+
+◎class属性を指定する方法
+　アクション名+_allを使うとclass指定することが出来ます。
+　対象のclassを持つ要素全てを操作します。
+　classを指定するときはCSSセレクタを使用して.クラス名のように書きます。
+
+　　<%= turbo_stream.append_all ".content" do %>
+  　　<div>おいちい</div>
+　　<% end %>
+
+◎参照
+　　https://turbo.hotwired.dev/reference/streams
+　　https://github.com/hotwired/turbo-rails/blob/main/app/models/turbo/streams/tag_builder.rb
