@@ -183,3 +183,25 @@
 　　デフォルトの画像を表示します。例えば、default_url 'avatar_placeholder' と設定することで、<br>
 　　avatar_placeholder という名前の画像が表示されるようになります。<br>
 　　この設定により、画像がアップロードされていない投稿に対しても、デザインを統一することができます。<br>
+<br>
+　　このpublic/uploads/配下に保存される画像は、Githubなどにアップロードする必要がないので、.gitignoreファイルに<br>
+　　/public/uploadsを指定してGit管理下から除外します。<br>
+　　.gitignore<br>
+  ```
+  　　　　/public/uploads
+```
+
+### 　6. アバター画像の表示
+　　アバター画像を登録しただけでは画像は表示されません。
+
+#### 　✅アバター画像を表示できるようにする
+　　アバター画像を表示させるには、まずは画像が保存されている場所(パス)を取得する必要があります。
+　　Userモデルに、AvatarImageUploaderクラスとavatar_imageカラムを紐づけたので、
+　　以下のAvatarImageUploaderクラスのメソッドを使って
+　　簡単にアップロードしたファイルの情報を取得することが出来ます。
+
+| メソッド |	内容 | 例 |
+|:--------|:-----|:--|
+| url	| ファイルのURLを取得 | userインスタンス.avatar.url |
+| current_path | カレントパス取得 | userインスタンス.avatar.current_path |
+| avatar_identifier |	ファイル名を取得	| userインスタンス.avatar.avatar_identifier |
