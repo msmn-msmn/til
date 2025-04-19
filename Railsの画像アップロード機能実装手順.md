@@ -139,7 +139,7 @@
 <br>
 　　hidden_fieldは、ファイルアップロードのキャッシュを保持するための隠しフィールドを生成しています。<br>
 　　CarrierWaveでは、ファイルの一時保存を行い、フォームの再送信時にも同じファイルを使用できるように<br>
-　　する機能があります。avatar_image_cache は、このキャッシュ機能をサポートするために使用されます。<br>
+　　する機能があります。(カラム名)_cache は、このキャッシュ機能をサポートするために使用されます。<br>
 　　例えば、フォームのバリデーションエラーが発生した場合でも、<br>
 　　ユーザーが再度ファイルを選択する必要がないように、このキャッシュ機能を利用します。<br>
 
@@ -192,16 +192,18 @@
 ```
 
 ### 　6. アバター画像の表示
-　　アバター画像を登録しただけでは画像は表示されません。
-
+　　アバター画像を登録しただけでは画像は表示されません。<br>
+<br>
 #### 　✅アバター画像を表示できるようにする
-　　アバター画像を表示させるには、まずは画像が保存されている場所(パス)を取得する必要があります。
-　　Userモデルに、AvatarImageUploaderクラスとavatar_imageカラムを紐づけたので、
-　　以下のAvatarImageUploaderクラスのメソッドを使って
-　　簡単にアップロードしたファイルの情報を取得することが出来ます。
-
+　　アバター画像を表示させるには、まずは画像が保存されている場所(パス)を取得する必要があります。<br>
+　　Userモデルに、AvatarImageUploaderクラスとavatar_imageカラムを紐づけたので、<br>
+　　以下のAvatarImageUploaderクラスのメソッドを使って<br>
+　　簡単にアップロードしたファイルの情報を取得することが出来ます。<br>
+<br>
 | メソッド |	内容 | 例 |
 |:--------|:-----|:--|
-| url	| ファイルのURLを取得 | userインスタンス.avatar.url |
-| current_path | カレントパス取得 | userインスタンス.avatar.current_path |
-| avatar_identifier |	ファイル名を取得	| userインスタンス.avatar.avatar_identifier |
+| url	| ファイルのURLを取得 | userインスタンス.avatar_image.url |
+| current_path | カレントパス取得 | userインスタンス.avatar_image.current_path |
+| avatar_identifier |	ファイル名を取得	| userインスタンス.avatar_image.avatar_identifier | 
+<br>
+　　※userインスタンス.avatar の avatar 部分は、モデルにマウントされたカラム名を指します。<br>
