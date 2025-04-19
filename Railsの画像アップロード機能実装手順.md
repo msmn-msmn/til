@@ -207,3 +207,30 @@
 | avatar_identifier |	ファイル名を取得	| userインスタンス.avatar_image.avatar_identifier | 
 <br>
 　　※userインスタンス.avatar の avatar 部分は、モデルにマウントされたカラム名を指します。<br>
+<br>
+　　アップロードした画像は、上記のurlメソッドとimgタグを生成する image_tagを使って表示します。<br>
+　　以下のように、app/views/users/show.html.erbにコードを追加します。<br>
+　　app/views/users/show.html.erb<br>
+  
+```
+<p>
+  <strong>Nickname:</strong>
+  <%= @user.nickname %>
+</p>
+
+<p>
+  <strong>Age:</strong>
+  <%= @user.age %>
+</p>
+
+<!-- 追加するコード-->
+<% if @user.avatar_image? %>  <!-- アップロード画像がある場合に実行する -->
+  <p>
+    <strong>Avatar:</strong>
+    <%= image_tag @user.avatar_image.url %><!-- userインスタンスの画像ファイルのURLを取得し表示 -->
+  </p>
+<% end %>
+<!-- ここまで -->
+```
+
+　　上記は、アバター画像が無いユーザーもいるので、エラーが出ないようにif文を使って条件分岐も追加してます。<br>
