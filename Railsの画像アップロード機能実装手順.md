@@ -72,3 +72,74 @@
 ```
 　　avatar_imageはユーザーがアップロードした画像ファイルを、avatar_image_cacheはそのキャッシュ情報を含むため、<br>
 　　これらを許可リストに追加することで、適切にデータを処理し、保存することができます。<br>
+
+### 　4. アップローダークラスとカラムの紐づけ
+　　次に、「アップロード画像用のカラム」と「アップローダークラス」を紐づける為に、以下のコードをモデルに記述します。<br>
+　　　app/models/モデル名.rb<br>
+```
+  　　　　class モデル名 < ActiveRecord::Base
+  　　　　  mount_uploader [:カラム名], [アップローダークラス]
+  　　　　end
+```
+　　今回は、ユーザーのアバター画像のアップロード機能を追加するので、以下のように<br>
+　　Userモデルに先ほど作成したアバター画像用の「avatar_imageカラム」と「AvatarUploaderクラス」を紐づけます。<br>
+　　　app/models/user.rb<br>
+```
+  　　　　class User < ActiveRecord::Base
+  　　　　  mount_uploader :avatar_image, AvatarImageUploader
+  　　　　end
+```
+　　mount_uploader :avatar_image, AvatarImageUploader の記述を加えることで、Userモデルに対して<br>
+　　CarrierWave の アップローダークラス（AvatarImageUploader）をマウントします。<br>
+　　これにより、Userモデルのインスタンスで avatar_image という属性を持つことができ、<br>
+　　画像のアップロードや取得が簡単に行えるようになります。<br>
+<br>
+　　また、上記を記述することにより、CarrierWave が提供するアップロードされた画像のURLを取得することが<br>
+　　できるようになります。(今回の場合 avatar_image_url メソッドを使用して、画像のURLを取得できるようになります。)<br>
+<br>
+　　これは、CarrierWaveがモデルに対して動的にメソッドを追加し、ファイルの保存場所やURLを管理する機能を<br>
+　　提供するためです。この設定により、Userモデルは画像のアップロード機能を持ち、ビューで画像を表示するための<br>
+　　URLを生成することが可能となります。<br>
+
+#### 　❇️補足説明
+　　今回はアバター画像用のアップロード機能ですが、CSVのアップロード機能を追加する場合は<br>
+　　CSV用のカラムとアップローダーを生成してモデルで紐づける必要があります。<br>
+
+### 　5. アバター画像の登録・更新
+#### 　✅アップロードできるファイルを jpg, jpeg, png, gif のみにする<br>
+　　app/uploaders/avatar_image_uploader.rbの extension_allowlist 部分を以下のように編集する。<br>
+```
+  　　　　class AvatarImageUploader < CarrierWave::Uploader::Base
+  　　　　  ... 省略 ...
+
+  　　　　  def extension_allowlist
+  　　　　    %w[jpg jpeg gif png]
+  　　　　  end
+
+  　　　　  ... 省略 ...
+  　　　　end
+```
+　　extension_allowlist メソッドは、CarrierWave で許可されるファイル拡張子のリストを指定するために使用されます。<br>
+<br>
+　　このメソッドを定義することで、アップロードできるファイルの種類を制限し、セキュリティとデータの整合性を確保します。<br>
+　　上記コードでいえば、extension_allowlistメソッド に %w[jpg jpeg gif png] を指定することで、<br>
+　　アップロード可能なファイル形式を jpg、jpeg、gif、png のみに制限しています。<br>
+　　これにより、想定外のファイル形式がアップロードされるのを防ぐことができます。<br>
+<br>
+#### 　✅avatar_imageカラムに値が無い場合は、指定した画像（avatar_placeholder.png）を表示するように設定する<br>
+　　app/uploaders/avatar_image_uploader.rbの default_url 部分を以下のように編集する。<br>
+```
+  　　　　class AvatarImageUploader < CarrierWave::Uploader::Base
+  　　　　  ... 省略 ...
+  　　　　  def default_url
+  　　　　    'avatar_placeholder'
+  　　　　  end
+  　　　　  ... 省略 ...
+  　　　　end
+```
+　　default_urlメソッド は、ファイルがアップロードされていない場合にデフォルトで表示する画像のURLを指定します。<br>
+<br>
+　　CarrierWaveでは、アップロードされたファイルが存在しない場合に、このメソッドで定義されたURLを使用して<br>
+　　デフォルトの画像を表示します。例えば、default_url 'avatar_placeholder' と設定することで、<br>
+　　avatar_placeholder という名前の画像が表示されるようになります。<br>
+　　この設定により、画像がアップロードされていない投稿に対しても、デザインを統一することができます。<br>
