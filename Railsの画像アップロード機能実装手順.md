@@ -106,6 +106,29 @@
 　　CSV用のカラムとアップローダーを生成してモデルで紐づける必要があります。<br>
 
 ### 　5. アバター画像の登録・更新
+　　ユーザー登録・編集フォームでアバター画像を追加出来る様に、app/views/users/の既存のフォームに<br>
+　　file_filedでファイル選択ボックスを作成します。<br>
+```
+  　　　　app/views/users/_form.html.erb
+  　　　　<div class="field">
+  　　　　  <%= form.label :nickname %>
+  　　　　  <%= form.text_field :nickname %>
+  　　　　</div>
+
+  　　　　<div class="field">
+  　　　　  <%= form.label :age %>
+  　　　　  <%= form.number_field :age %>
+  　　　　</div>
+
+  　　　　<!-- ここから追加するコード -->
+  　　　　<div class="field">
+  　　　　  <%= form.label :avatar %>
+  　　　　  <%= form.file_field :avatar %>
+  　　　　</div>
+```
+　　上記の11行目からのコードを追加してlocalhost:3000/users/newを確認すると、<br>
+　　ファイル選択ボックスが作成されてアバター画像の登録・追加が行える様になっています。<br>
+<br>
 #### 　✅アップロードできるファイルを jpg, jpeg, png, gif のみにする<br>
 　　app/uploaders/avatar_image_uploader.rbの extension_allowlist 部分を以下のように編集する。<br>
 ```
