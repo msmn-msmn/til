@@ -122,12 +122,27 @@
 
   　　　　<!-- ここから追加するコード -->
   　　　　<div class="field">
-  　　　　  <%= form.label :avatar %>
-  　　　　  <%= form.file_field :avatar %>
+  　　　　<%= f.label :avatar_image %>
+  　　　　<%= f.file_field :avatar_image, class: "form-control", accept: 'image/*' %>
+  　　　　<%= f.hidden_field :avatar_image_cache %>
   　　　　</div>
 ```
 　　上記の11行目からのコードを追加してlocalhost:3000/users/newを確認すると、<br>
 　　ファイル選択ボックスが作成されてアバター画像の登録・追加が行える様になっています。<br>
+<br>
+　　file_field は、HTMLのinput要素のtype属性をfile に設定するためのform_withのヘルパーメソッドです。<br>
+　　file_field を使用することにより、ユーザーがファイルを選択してアップロードできるフォームフィールドを生成します。<br>
+　　また、acceptオプションを使用して、許可するファイルタイプを指定することも可能です。<br>
+　　例えば、file_field, accept: 'image/*' と記述することで、画像ファイルのみを選択できる<br>
+　　ファイルアップロードフィールドを作成します。<br>
+<br>
+　　hidden_fieldは、ファイルアップロードのキャッシュを保持するための隠しフィールドを生成しています。<br>
+　　CarrierWaveでは、ファイルの一時保存を行い、フォームの再送信時にも同じファイルを使用できるように<br>
+　　する機能があります。avatar_image_cache は、このキャッシュ機能をサポートするために使用されます。<br>
+　　例えば、フォームのバリデーションエラーが発生した場合でも、<br>
+　　ユーザーが再度ファイルを選択する必要がないように、このキャッシュ機能を利用します。<br>
+
+※隠しフィールドとは、ユーザーには見えない形でフォームにデータを保存するためのものです。これにより、フォームを送信したときに必要なデータを隠して送ることができます。
 <br>
 #### 　✅アップロードできるファイルを jpg, jpeg, png, gif のみにする<br>
 　　app/uploaders/avatar_image_uploader.rbの extension_allowlist 部分を以下のように編集する。<br>
