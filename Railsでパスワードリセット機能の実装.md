@@ -267,9 +267,13 @@
         end
 ```
 　　　ターミナルでbundle installします。Dockerを使用している場合はコンテナ内で実行します。<br>
-   
+　　　***Ubuntu***<br>
+```
+        docker compose exec web bundle install
+        docker compose restart 　　　　　//Dockerの再起動でgemを適用する
+```   
 
-bundle install
+
 ### 　***✅ルーティングの設定***
 　　　***routes.rb***<br>
    ```
