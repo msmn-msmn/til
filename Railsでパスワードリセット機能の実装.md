@@ -106,12 +106,12 @@
 　　　end
 ```
 
-　　　`user.reset_password_mailer =`　　　ファイル内のこの記述のコメントアウトを外し、UserMailerを追加します。
+　　　`user.reset_password_mailer =`　　　ファイル内のこの記述のコメントアウトを外し、UserMailerを追加します。<br>
 
 　
 ### 　　***✅メールの設定***
 
-　　　***app/views/user_mailer/reset_password_email.html.erb***
+　　　***app/views/user_mailer/reset_password_email.html.erb***<br>
    ```
 　　　<p><%= @user.name %>様</p>
 　　　<p>パスワード再発行のご依頼を受け付けました。</p>
@@ -119,10 +119,19 @@
 　　　<p><a href="<%= @url %>"><%= @url %></a></p>
    ```
 
-　　　***app/views/user_mailer/reset_password_email.text.erb***
+　　　***app/views/user_mailer/reset_password_email.text.erb***<br>
    ```
 　　　<%= @user.name %>様
 　　　パスワード再発行のご依頼を受け付けました。
 　　　こちらのリンクからパスワードの再発行を行ってください。
 　　　<%= @url %>
+```
+### 　　***❓なんで２種類のviewを用意する❓***<br>
+```
+　　　　テキストバージョンも用意しておくと、HTMLレンダリングで問題が発生した場合に信頼できるフォールバックとして
+　　　　機能するため、HTML形式とテキスト形式の両方を送信することがベストプラクティスと見なされます。
+
+　　　　なお、インスタンス変数（@userと@url）は、HTMLテンプレートとテキストテンプレートの両方で利用可能になります。
+　　　　これで、mailメソッドを呼び出せば、Action Mailerは2種類のテンプレート（テキストおよびHTML）を探索して、
+　　　　multipart/alternative形式のメールを自動生成します。
 ```
