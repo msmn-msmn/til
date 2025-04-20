@@ -52,4 +52,71 @@ Ubuntu<br>
 　　　docker compose exec web rails db:migrate
 ```
 
-Mailerの作成
+## 　2.Mailerの作成
+### 　　　***✅パスワードリセット用のMailerを作成***
+　　　最初にActionMailerを使用してパスワードリセット用のMailerを作成します。
+  ```
+rails g mailer UserMailer reset_password_email
+```
+　　　※reset_password_emailを付けることで
+　　　作成されるファイル
+　　　app/mailers/user_mailer.rb
+　　　app/views/user_mailer
+　　　app/views/user_mailer/reset_password_email.text.erb
+　　　app/views/user_mailer/reset_password_email.html.erb
+　　　test/mailers/user_mailer_test.rb
+　　　test/mailers/previews/user_mailer_preview.rb
+
+　
+　
+### 　　　***✅メールを送信するためのメソッドを作成***
+
+app/mailers/user_mailer.rb
+class UserMailer < ApplicationMailer
+  default from: 'from@example.com'
+
+  def reset_password_email(user)
+    @user = User.find(user.id)
+    @url  = edit_password_reset_url(@user.reset_password_token)
+    mail(to: user.email,
+         subject: t('defaults.password_reset'))
+  end
+end
+default from: 'from@example.com'メールの送信元のアドレスを指定できます。
+mail(to: user.email,subject: 'パスワードリセット')メールの宛先、件名を指定します。
+@userと@urlはmailのviewで使用します。
+
+　
+　
+次に、reset_password サブモジュールを追加し、使用するメーラーを定義します。
+
+config/initializers/sorcery.rb
+Rails.application.config.sorcery.submodules = [:reset_password, blabla, blablu, ...]
+
+Rails.application.config.sorcery.configure do |config|
+  config.user_config do |user|
+    user.reset_password_mailer = UserMailer
+  end
+end
+user.reset_password_mailer =
+この記述が405行目にあります（現在）コメントアウトを外し、UserMailerを追加しましょう。
+
+　
+### 　　　***✅メールの設定***
+
+app/views/user_mailer/reset_password_email.html.erb
+<p><%= @user.name %>様</p>
+
+<p>パスワード再発行のご依頼を受け付けました。</p>
+
+<p>こちらのリンクからパスワードの再発行を行ってください。</p>
+
+<p><a href="<%= @url %>"><%= @url %></a></p>
+app/views/user_mailer/reset_password_email.text.erb
+<%= @user.name %>様
+
+パスワード再発行のご依頼を受け付けました。
+
+こちらのリンクからパスワードの再発行を行ってください。
+
+<%= @url %>
