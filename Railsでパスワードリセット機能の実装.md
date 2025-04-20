@@ -205,7 +205,7 @@
         resources :password_resets, only: [:create, :edit, :update]
 ```
 　
-　　　Userモデルにバリデーションを追記<br>
+　　Userモデルにバリデーションを追記<br>
 　　　***models/user.rb***<br>
 ```
         validates :reset_password_token, presence: true, uniqueness: true, allow_nil: true
