@@ -205,7 +205,7 @@
         resources :password_resets, only: [:create, :edit, :update]
 ```
 　
-　　Userモデルにバリデーションを追記<br>
+### 　***✅Userモデルにバリデーションを追記<br>
 　　　***models/user.rb***<br>
 ```
         validates :reset_password_token, presence: true, uniqueness: true, allow_nil: true
@@ -254,3 +254,110 @@
             <%= f.submit 'リセット' %>
         <% end %>
 ```
+
+## 　5.letter_opener_webの導入
+　　　letter_opener_webを使えば、開発環境では実際にメールを送信することなくメールが送信されているか確認することができます。<br>
+　　<br>
+### 　***✅letter_opener_webのインストール***
+　　　letter_opener_webは開発環境でしか使用しない為、development配下に記述します。<br>
+　　　***Gemfile***<br>
+   ```
+        group :development do
+          gem 'letter_opener_web', '~> 2.0'
+        end
+```
+　　　ターミナルでbundle installします。Dockerを使用している場合はコンテナ内で実行します。<br>
+   
+
+bundle install
+### 　***✅ルーティングの設定***
+　　　***routes.rb***<br>
+   ```
+        Rails.application.routes.draw do
+          mount LetterOpenerWeb::Engine, at: "/letter_opener" if Rails.env.development?
+
+        end
+```
+　　　***config/environments/development.rb***<br>
+   ```
+        config.action_mailer.delivery_method = :letter_opener_web # 送信方法を指定
+        config.action_mailer.perform_deliveries = true # メールを実際に送信するかどうかを指定
+```
+
+　　　こちらのアドレスでletter_opener_webを開けます。<br>
+   ```
+　　　http://localhost:3000/letter_opener
+```
+
+## 　6.gem configを導入する
+　　　configは定数を管理するgemです。configを導入することで、ローカル環境でのメールをletter_opener_web、<br>
+　　　本番環境のメールを指定したプロトコルでなど、簡単に分けることが可能です。<br>
+   
+### 　***✅gemのインストール***
+　　　
+　　
+
+Gemfile
+gem 'config'
+Gemfileに記述したらbundle installします。
+
+　　
+【ファイルを生成】
+
+rails g config:install
+　　　生成されるファイル
+
+config/initializers/config.rb
+config/settings.yml
+config/settings.local.yml
+config/settings
+config/settings/development.yml
+config/settings/production.yml
+config/settings/test.yml
+.gitignore
+
+生成された設定ファイルの役割
+ファイル名	役割
+config/initializers/config.rb	configの設定ファイル
+config/settings.yml	すべての環境で利用する定数を定義
+config/settings.local.yml	ローカル環境のみで利用する定数を定義
+config/settings/development.yml	開発環境のみで利用する定数を定義
+config/settings/production.yml	本番環境のみで利用する定数を定義
+config/settings/test.yml	テスト環境のみで利用する定数を定義
+　　
+　　　.gitignoreには以下の内容が自動で追記されます。
+
+.gitignore
+config/settings.local.yml
+config/settings/*.local.yml
+config/environments/*.local.yml
+　　
+【開発環境での定数設定】
+
+config/environments/development.rb
+  config.action_mailer.delivery_method = :letter_opener_web 
+  config.action_mailer.default_url_options = Settings.default_url_options.to_h
+42行目辺りにaction_mailerのコードがあるので、その下辺りに記述すると分かりやすいです。
+
+config.action_mailer.delivery_method = :letter_opener_web
+Railsアプリケーションでメールを送信する際に使用する配送方法（delivery method）を設定しています。
+
+config.action_mailer.default_url_options =　Settings.default_url_options.to_h
+ActionMailerがメールを生成する際に使用するデフォルトのURLオプションを設定しています。
+以下のdevelopment.ymlで記述された定数default_url_optionsを読み込んでいます。
+　　
+
+config/settings/development.yml
+default_url_options:
+  host: 'localhost:3000'
+開発環境でのhost設定です。
+
+　　
+【本番環境での定数設定】
+
+config/environments/production.rb
+config.action_mailer.default_url_options = Settings.default_url_options.to_h
+config/settings/production.yml
+default_url_options:
+  protcol: 'https'
+  host: 'example.com'
