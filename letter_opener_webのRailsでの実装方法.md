@@ -12,6 +12,11 @@
          gem 'letter_opener_web', '~> 3.0'
        end
 ```
+　　　　Ubuntu<br>
+```
+       docker compose exec web bundle install
+       docker compose restart 　　　　　//Dockerの再起動でgemを適用する
+```
 <br>
 
 ### 　　2. ルーティングの設定
