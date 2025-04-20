@@ -51,7 +51,7 @@
 　　　　ビューを用いてコンテンツを構造化します。コントローラーはクライアントに送り返すHTMLコンテンツを生成しますが、<br>
 　　　　メーラーはメールで配信されるメッセージを作成します。<br>
     <br>
-### 　　　***Ex.*** UserMailerクラスに以下のようにwelcome_emailというメソッドを追加して、ユーザーの登録済みメールアドレスにメールを送信する。<br>
+### 　　　***Ex.*** UserMailerクラスに以下のようにwelcome_emailというメソッドを追加して、ユーザーの登録済みメールアドレスにメールを送信する場合
 ```
 　　　　　class UserMailer < ApplicationMailer
 　　　　　  default from: "notifications@example.com"
