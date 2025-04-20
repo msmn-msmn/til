@@ -218,3 +218,39 @@
  　　　　　　　　　　　　　　トークンの初期値はnilのため、このままではユニーク制約に引っかかりユーザーを<br>
  　　　　　　　　　　　　　　複数登録できなくなる問題が発生してしまいます。<br>
  　　　　　　　　　　　　　　この問題を回避するために付与します。<br>
+
+## 　4.viewファイル作成
+　　　ログインページに下記のリンクを追加します。<br>
+　　　***app/views/user_sessions/new.html.erb***<br>
+   ```
+        <%= link_to 'passwordをお忘れの方はコチラ', new_password_reset_path %>
+```
+
+　　　パスワード申請フォームと再設定フォームを作成します。<br>
+　　　***password_resets/new.html.erb***<br>
+   ```
+        <h3>パスワードリセット申請</h3>
+        <%= form_with url: password_resets_path do |f| %>
+            <%= f.label :email %>
+            <%= f.email_field :email %>
+            <%= f.submit '申請' %>
+        <% end %>
+```
+
+　　　***password_resets/edit.html.erb***<br>
+   ```
+        <h3>パスワード再設定</h3>
+        <%= form_with model: @user, url: password_reset_path(@token) do |f| %>
+            <%= render 'shared/error_message', object: f.object %>
+        	  <%= f.label :email %>
+            <%= @user.email %>
+
+            <%= f.label :password %>
+            <%= f.password_field :password %>
+
+            <%= f.label :password_confirmation %>
+            <%= f.password_field :password_confirmation %>
+
+            <%= f.submit 'リセット' %>
+        <% end %>
+```
