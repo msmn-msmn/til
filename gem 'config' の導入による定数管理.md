@@ -6,5 +6,14 @@
 　　config/settings/production.yml、config/settings/test.yml に環境ごとの設定を書き分けます。<br>
 <br>
 ## ❇️基本的な使い方
-### 1.gemのインストール
-
+## 　1.gemのインストール
+　　　Gemfileに追記してから、bundle installを行います。<br>
+　　　Gemfile<br>
+   ```
+　　　　gem 'config'
+```
+　　　Ubuntu<br>
+```
+　　　　$ docker compose exec web bundle install
+　　　　$ docker compose restart 　　　　　//Dockerの再起動でgemを適用する
+```
