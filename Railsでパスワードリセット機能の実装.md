@@ -135,3 +135,86 @@
 　　　　これで、mailメソッドを呼び出せば、Action Mailerは2種類のテンプレート（テキストおよびHTML）を探索して、
 　　　　multipart/alternative形式のメールを自動生成します。
 ```
+
+## 　3.controller作成
+### 　***✅コントローラーの生成***<br>
+　　　すべてのパスワードアクションを処理するコントローラーを生成します。<br>
+　　　Ubuntu<br>
+```
+        docker compose exec web rails g controller PasswordResets create edit update
+```
+
+　　　***app/controllers/password_resets_controller.rb***<br>
+```
+　　　class PasswordResetsController < ApplicationController
+　　　# Rails 5 以降では、ApplicationController に
+　　　# before_action :require_login
+　　　# が宣言されていないとエラーになります。
+　　　  skip_before_action :require_login
+    
+　　　# パスワードリセットをリクエストします。
+　　　# ユーザーがリセットパスワードフォームにメールアドレスを入力して送信したときにここに来ます。
+　　　  def create 
+　　　    @user = User.find_by_email(params[:email])
+        
+　　　# この行は、ランダムなトークン付きURLの手順を含むメールをユーザーに送信します。
+　　　    @user.deliver_reset_password_instructions! if @user
+        
+　　　# メールアドレスが見つかったかどうかにかかわらず、ユーザーに案内を送信したことを通知します。
+　　　# これは、システムに存在するメールアドレス情報を攻撃者に漏らさないためです。
+　　　    redirect_to(root_path, :notice => 'Instructions have been sent to your email.')
+　　　  end
+    
+　　　# パスワードリセットフォームです。
+　　　  def edit
+　　　    @token = params[:id]
+　　　    @user = User.load_from_reset_password_token(params[:id])
+
+　　　    if @user.blank?
+　　　      not_authenticated
+　　　      return
+　　　    end
+　　　  end
+      
+  # ユーザーがリセットパスワードフォームを送信したときに発火します。
+　　　  def update
+         @token = params[:id]
+         @user = User.load_from_reset_password_token(params[:id])
+
+         if @user.blank?
+           not_authenticated
+             return
+         end
+
+    # 次の行は、パスワード確認バリデーションを機能させます。
+         @user.password_confirmation = params[:user][:password_confirmation]
+    # 次の行は、一時トークンをクリアし、パスワードを更新します。
+         if @user.change_password(params[:user][:password])
+           redirect_to(root_path, :notice => 'Password was successfully updated.')
+         else
+           render :action => "edit"
+         end
+　　　  end
+　　　end
+```
+　
+### 　***✅ルーティングの設定***
+　　　すべてのパスワードアクションのルーティングを設定します。<br>
+　　　***config/routes.rb***<br>
+   ```
+        resources :password_resets, only: [:create, :edit, :update]
+```
+　
+　　　Userモデルにバリデーションを追記<br>
+　　　***models/user.rb***<br>
+```
+        validates :reset_password_token, presence: true, uniqueness: true, allow_nil: true
+```
+
+　　　`uniqueness: true`　　　tokenは一意なものでなければならないのでユニーク成約を付けます。<br>
+ 　　　　　　　　　　　　　　これがないと別の人のパスワードを変更できてしまう可能性があります。<br>
+<br>
+　　　`allow_nil: true`　　　 対象の値がnilの場合にバリデーションをスキップするもの。<br>
+ 　　　　　　　　　　　　　　トークンの初期値はnilのため、このままではユニーク制約に引っかかりユーザーを<br>
+ 　　　　　　　　　　　　　　複数登録できなくなる問題が発生してしまいます。<br>
+ 　　　　　　　　　　　　　　この問題を回避するために付与します。<br>
