@@ -298,19 +298,18 @@
 　　　本番環境のメールを指定したプロトコルでなど、簡単に分けることが可能です。<br>
    
 ### 　***✅gemのインストール***
-## 　1.gemのインストール
 　　　Gemfileに追記してから、bundle installを行います。<br>
-　　　Gemfile<br>
+　　　***Gemfile***<br>
    ```
 　　　　gem 'config'
 ```
-　　　Ubuntu<br>
+　　　***Ubuntu***<br>
 ```
 　　　　$ docker compose exec web bundle install
 　　　　$ docker compose restart 　　　　　//Dockerの再起動でgemを適用する
 ```
 　　　その後にｇコマンドで設定用のファイルを生成します。<br>
-　　　Ubuntu<br>
+　　　***Ubuntu***<br>
 ```
 　　　　$ docker compose exec web rails g config:install
 ```
@@ -360,32 +359,41 @@
 　　　これにより、一般的な設定を共通ファイルに記述し、環境や開発者ごとの特定の設定をローカルファイルで上書きすることが可能です。<br>
 
 　　
-【開発環境での定数設定】
+### 　***✅開発環境での定数設定***
 
-config/environments/development.rb
-  config.action_mailer.delivery_method = :letter_opener_web 
-  config.action_mailer.default_url_options = Settings.default_url_options.to_h
-42行目辺りにaction_mailerのコードがあるので、その下辺りに記述すると分かりやすいです。
-
-config.action_mailer.delivery_method = :letter_opener_web
-Railsアプリケーションでメールを送信する際に使用する配送方法（delivery method）を設定しています。
-
-config.action_mailer.default_url_options =　Settings.default_url_options.to_h
-ActionMailerがメールを生成する際に使用するデフォルトのURLオプションを設定しています。
-以下のdevelopment.ymlで記述された定数default_url_optionsを読み込んでいます。
+　　　***config/environments/development.rb***
+   ```
+　　　config.action_mailer.delivery_method = :letter_opener_web 
+　　　config.action_mailer.default_url_options = Settings.default_url_options.to_h
+```
+　　　同ファイル内にaction_mailerのコードがあるので、その下辺りに記述すると分かりやすいです。<br>
+<br>
+　　　`config.action_mailer.delivery_method = :letter_opener_web`<br>
+　　　Railsアプリケーションでメールを送信する際に使用する配送方法（delivery method）を設定しています。<br>
+<br>
+　　　`config.action_mailer.default_url_options =　Settings.default_url_options.to_h`<br>
+　　　ActionMailerがメールを生成する際に使用するデフォルトのURLオプションを設定しています。<br>
+　　　以下のdevelopment.ymlで記述された定数default_url_optionsを読み込んでいます。<br>
 　　
 
-config/settings/development.yml
-default_url_options:
-  host: 'localhost:3000'
-開発環境でのhost設定です。
+　　　***config/settings/development.yml***
+   ```
+　　　default_url_options:
+　　　host: 'localhost:3000'
+```
+　　　開発環境でのhost設定です。<br>
 
 　　
-【本番環境での定数設定】
+### 　***✅本番環境での定数設定***
 
-config/environments/production.rb
-config.action_mailer.default_url_options = Settings.default_url_options.to_h
-config/settings/production.yml
-default_url_options:
-  protcol: 'https'
-  host: 'example.com'
+　　　***config/environments/production.rb***
+   ```
+　　　config.action_mailer.default_url_options = Settings.default_url_options.to_h
+```
+
+　　　***config/settings/production.yml***
+```
+　　　default_url_options:
+　　　  protcol: 'https'
+　　　  host: 'example.com'
+```
