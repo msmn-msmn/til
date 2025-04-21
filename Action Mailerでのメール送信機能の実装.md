@@ -15,7 +15,7 @@
 　　　　最初に、以下の「メーラー」ジェネレータコマンドを実行して、メーラー関連のクラスを作成します。<br>
 　　　　Ubuntu<br>
 ```
-　　　　　$ docker compose exec web bin/rails generate mailer User
+　　　　　$ docker compose exec web rails generate mailer User
 ```
 　　　　生成されるすべてのメーラークラスは、以下のUserMailerと同様にApplicationMailerを継承します。<br>
 <br>
