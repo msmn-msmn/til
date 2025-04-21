@@ -11,7 +11,7 @@
 　　　まずはパスワードリセット用のモジュールをインストールします<br>
 　　　Ubuntu<br>
 ```
-        docker compose exec web rails generate sorcery:install reset_password --only-submodules
+        docker compose exec web rails g sorcery:install reset_password --only-submodules
 ```
 　　　作成されたファイルがこちら。<br>
 　　　config/initializers/sorcery.rb<br>
