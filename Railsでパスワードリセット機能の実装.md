@@ -17,7 +17,8 @@
 　　　config/initializers/sorcery.rb<br>
 　　　app/models/user.rb<br>
 　　　db/migrate/20231105121233_sorcery_reset_password.rb<br>
-
+<br>
+　　　作成されたファイルを以下のように編集します。<br>
 　　　***config/initializers/sorcery.rb***<br>
    ```
 　　　Rails.application.config.sorcery.submodules = [:reset_password]
