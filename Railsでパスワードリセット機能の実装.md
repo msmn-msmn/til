@@ -176,10 +176,7 @@
 　　　    @user = User.load_from_reset_password_token(params[:id])
 
 　　　# @userがnilまたは空の場合、not_authenticatedメソッドを実行する
-　　　    if @user.blank?
-　　　      not_authenticated
-　　　      return
-　　　    end
+　　　    return not_authenticated if @user.blank?     #ガード句による構文
 　　　  end
       
 　　　# ユーザーがリセットパスワードフォームを送信したときに発火します。
@@ -203,6 +200,18 @@
 　　　  end
 　　　end
 ```
+
+```
+　　　    return not_authenticated if @user.blank?     #ガード句による構文
+
+　　　    上記のコードは下記の構文をガード句で1行にしていますが同じ処理になります。
+
+　　　    if @user.blank?
+           not_authenticated
+　　　      return
+         end
+```
+
 　
 ### 　***✅ルーティングの設定***
 　　　すべてのパスワードアクションのルーティングを設定します。<br>
