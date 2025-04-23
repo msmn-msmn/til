@@ -189,7 +189,7 @@
 
          if @user.blank?
            not_authenticated
-             return
+　　　      return
          end
 
 　　　# password_confirmation属性の有効性を確認
