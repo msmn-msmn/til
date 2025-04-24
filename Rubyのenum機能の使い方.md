@@ -11,7 +11,7 @@
 ## ***✅Ruby on Railsのモデルでenumを定義する基本的な使い方***
 　　この例では、status属性はpending、confirmed、shippedの3つの状態を持つことができ、<br>
 　　それぞれが0、1、2という整数値にマッピングされます。<br>
-　　これにより、Orderモデルのインスタンスはorder.pending?、order.confirmed!などの<br>
+　　これにより、Articleモデルのインスタンスはorder.pending?、order.confirmed!などの<br>
 　　メソッドを使用して状態を照会したり変更したりすることができます。<br>
 
 ```
