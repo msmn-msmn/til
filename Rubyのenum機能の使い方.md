@@ -16,9 +16,16 @@
 
 ```
 　　サンプルコード
-      class Order < ApplicationRecord
+      class Article < ApplicationRecord
+        # たった1行でこれまでの実装をカバー
         enum status: { pending: 0, confirmed: 1, shipped: 2 }
       end
+
+      # 生成されるメソッド例
+      article.pending!       # ステータスを変更
+      article.pending?       # 状態をチェック
+      article.status         # 現在の状態を取得
+      Article.pending        # scopeとして使用可能
 ```
 
 
