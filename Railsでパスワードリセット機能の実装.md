@@ -389,6 +389,7 @@
 　　　`config.action_mailer.default_url_options =　Settings.default_url_options.to_h`<br>
 　　　ActionMailerがメールを生成する際に使用するデフォルトのURLオプションを設定しています。<br>
 　　　以下のdevelopment.ymlで記述された定数default_url_optionsを読み込んでいます。<br>
+　　　***S*** ettingsの頭は大文字なことに注意！<br>
 　　
 
 　　　***config/settings/development.yml***
