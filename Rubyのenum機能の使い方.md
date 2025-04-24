@@ -28,6 +28,20 @@
       Article.pending        # scopeとして使用可能
 ```
 
+```
+　　オプションを使用した定義
+　　class User < ApplicationRecord
+　　  # 接頭辞をつける
+　　  enum role: { general: 0, admin: 1, owner: 2 }, _prefix: true
+　　  # => user.role_admin?, user.role_general? などが生成される
+　　  # 接尾辞をつける
+　　  enum status: { active: 0, inactive: 1 }, _suffix: true
+　　  # => user.active_status?, user.inactive_status? などが生成される
+　　  # カスタム接頭辞
+　　  enum role: { general: 0, admin: 1 }, _prefix: :account
+　　  # => user.account_general?, user.account_admin? などが生成される
+　　end
+```
 
 
 ## ***✅enumを使うメリット***
