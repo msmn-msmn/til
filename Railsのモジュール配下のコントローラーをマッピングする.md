@@ -12,3 +12,29 @@
 | モジュール配下 |	adminとかuserとか、グループ分けしたフォルダの中 |
 | コントローラー	| たとえば Admin::UsersController みたいに、グループ専用のコントローラー |
 | マッピング	| そのコントローラーにアクセスするための「道」を設定すること |
+
+## ***❇️やり方***
+　管理者と一般ユーザーとでルートページを分けるという想定で作業を行っていきます。<br>
+ <br>
+## ***💠コントローラーを生成する***
+　　Ubuntu
+  ```
+　　docker compose exec web rails generate contoroller Admin::Books
+```
+　　これでAdmin::BooksContorollerが、/contoroller/adminフォルダーの配下に<br>
+　　books_contoroller.rbという名前で生成されます。<br>
+
+## ***💠ルートを設定する***
+　　このようなモジュール対応のコントローラークラスに対して、RESTfulインターフェースを<br>
+　　定義するには、namespaceブロックを利用します。<br>
+  　routes.rb
+   ```
+　　namespace :admin do                                     #/admin/ っていうパスを自動的に付けて、コントローラーも Admin:: 配下にする
+　　  root to: "books#index"                                #/admin にアクセスしたら Admin::BooksController の index アクションに行く。つまり、管理者用トップページ！
+　　  resources :books, only: %i[index]                        #Admin::BooksContorollerのアクションを指定する
+　　  get 'login', to: 'user_sessions#new', :as => :login     #/admin/login にGETアクセスすると、Admin::UserSessionsController#new を呼び出す（ログインフォーム表示）。admin_login_path って名前も付く。
+　　  post 'login', to: 'user_sessions#create'                #/admin/login にPOSTすると、ログイン処理（セッション作成）
+　　  delete 'logout', to: 'user_sessions#destroy', :as => :logout                   #/admin/logout にDELETEすると、ログアウト処理。admin_logout_path って名前も付く。
+　　end
+　　
+　
