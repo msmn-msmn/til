@@ -36,5 +36,36 @@
 　　  post 'login', to: 'user_sessions#create'                #/admin/login にPOSTすると、ログイン処理（セッション作成）
 　　  delete 'logout', to: 'user_sessions#destroy', :as => :logout                   #/admin/logout にDELETEすると、ログアウト処理。admin_logout_path って名前も付く。
 　　end
+```
+### 　　***:as => :login***とは？<br>
+　　`このルーティングに「名前（名前付きルート）」をつけてる`ということ。<br>
+　　ここでひとつポイントがあって<br>
+<br>
+　　namespace :admin の中にあるから<br>
+　　単純に login_path じゃなくて、<br>
+　　admin_login_path<br>
+　　っていう名前が自動でつく。<br>
+　　つまり、<br>
+```
+　　namespace :admin なしなら → login_path
+
+　　namespace :admin ありなら → admin_login_path
+```
+　　になる.<br>
+　　まとめると<br>
+
+| 書き方	| 生成されるヘルパー名 |
+|:------|:-------------------|
+| as: :login （namespaceなし）|	login_path, login_url |
+|namespace :admin 内で as: :login | admin_login_path, admin_login_url |
+
+　　このように`as: :(任意のワード)`を使う事でパス名を自由にカスタマイズできる。<br>
+  <br>
+### 　　***ちょっとした注意⚡***<br>
+　　・as: :hoge でつけた名前は絶対**ユニーク（かぶらない）**にしないとダメ！<br>
+　　・同じ as: が複数あるとエラーになる（Railsがどっち使えばいいか分からなくなる）<br>
+　　・パスヘルパーを使いやすく読みやすくするために、わかりやすい名前をつけた方がいい！<br>
+
+
 　　
 　
