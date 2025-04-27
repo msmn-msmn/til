@@ -19,7 +19,7 @@
 ## ***💠コントローラーを生成する***
 　　Ubuntu
   ```
-　　docker compose exec web rails generate contoroller Admin::Books
+　　docker compose exec web rails generate controller Admin::Books
 ```
 　　これでAdmin::BooksContorollerが、/contoroller/adminフォルダーの配下に<br>
 　　books_contoroller.rbという名前で生成されます。<br>
