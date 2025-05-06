@@ -189,3 +189,16 @@
 <br>
 <br>
 
+## ***✅ Capybaraでのダイアログ操作付きフォームアクション一覧***
+| 操作の種類         | 使用メソッド             | 使用例                                                                 |
+|------------------|------------------------|----------------------------------------------------------------------|
+| 確認ダイアログを承認 | `accept_confirm`        | `accept_confirm('Are you sure?') { click_on 'Destroy' }`            |
+| 確認ダイアログを拒否 | `dismiss_confirm`       | `dismiss_confirm('Are you sure?') { click_on 'Destroy' }`           |
+| アラートの承認     | `accept_alert`          | `accept_alert('Something went wrong') { click_button 'OK' }`        |
+| アラートを拒否     | `dismiss_alert`         | `dismiss_alert('Something went wrong') { click_button 'Cancel' }`   |
+| 入力付きダイアログ  | `accept_prompt`         | `accept_prompt('Your name?', with: 'Alice') { click_on 'Submit' }`  |
+| 入力付きダイアログ拒否 | `dismiss_prompt`        | `dismiss_prompt('Your name?') { click_on 'Submit' }`                |
+<br>
+🔍 解説：<br>
+　accept/dismiss：ダイアログに対してOK（accept）またはキャンセル（dismiss）を押すシミュレーション。<br>
+　prompt系：ユーザーから入力を受け付けるダイアログに対して、値を入力して確定する場合に使用。<br>
