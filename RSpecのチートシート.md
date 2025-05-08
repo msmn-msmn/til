@@ -202,3 +202,12 @@
 🔍 解説：<br>
 　accept/dismiss：ダイアログに対してOK（accept）またはキャンセル（dismiss）を押すシミュレーション。<br>
 　prompt系：ユーザーから入力を受け付けるダイアログに対して、値を入力して確定する場合に使用。<br>
+<br>
+
+ EX. `accept_confirm('Are you sure?') { click_on 'Destroy' }` 
+ 　このコードは下記のように書くこともできる。
+  ```
+　　　accept_confirm('Are you sure?') do       #確認ダイアログの内容が'Are you sure?'のものを承認する
+　　　  click_on 'Destroy'　　　　　　　　　　　 #ダイアログを出す'Destroy'というボタン乃至リンクをクリックする
+　　　end
+```
