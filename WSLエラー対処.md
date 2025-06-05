@@ -94,3 +94,10 @@ processor       : 0
 processor       : 1           → 0〜1で2コア（設定通り！）
 
 ```
+
+### ・Windows Updateをする
+　Windows Updateの処理が完了していないのが原因の可能性があるので<br>
+　Updateを完了させる<br>
+ 
+　参考サイト：[Windows Update が完了しているか確認する方法](https://f-security.jp/v6/support/faq/200101.html)
+　
