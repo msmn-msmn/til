@@ -23,7 +23,7 @@
 | `null: false`  | このカラムは `NULL` を許容しない                                  | `title:string:null:false`           |
 | `default:`     | このカラムの**初期値**を設定                                      | `status:string:default:"draft"`     |
 | `index: true`  | このカラムに**インデックス**を追加                                   | `email:string:index`                |
-| `unique: true` | このカラムに**ユニークインデックス**を追加（`index: { unique: true }`と同義） | `email:string:uniq`                 |
+| `unique: true` | このカラムに**ユニークインデックス**を追加（`index: { unique: true }`と同義） | `email:string:index:unique`                 |
 | `limit:`       | カラムのサイズ制限（主に `string` や `integer`）                    | `username:string:limit:50`          |
 | `precision:`   | 数値カラムの**全体の桁数**（小数を含む）                                | `price:decimal:precision:8`         |
 | `scale:`       | 数値カラムの**小数点以下の桁数**                                    | `price:decimal:precision:8,scale:2` |
@@ -34,7 +34,8 @@
 　　でmodelクラスとdb用のマイグレーションファイルを生成される<br>
 　　この時点では、生成したモデルのテーブルはまだできていない<br>
   
-　　マイグレーションファイルのチェンジメソッドに追記が無い場合<br>
+　　マイグレーションファイルの `change` メソッドに必要なカラムや設定がすでに記述されている場合は、<br>
+　　そのまま以下のコマンドでDBに反映され、テーブルが生成される<br>
 ```
 　　rails db:migrate
 ```
