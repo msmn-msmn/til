@@ -82,16 +82,16 @@
   　　４．設定内容が反映されているか確認<br>
    　　　WSL内(Ubuntuとか)で次のコマンドを実行する<br>
   ```
-# メモリ確認
-cat /proc/meminfo | grep MemTotal
-# 出力例
-MemTotal:        1950484 kB   → 約2GB（設定通り！）
+           # メモリ確認
+           cat /proc/meminfo | grep MemTotal
+           # 出力例
+           MemTotal:        1950484 kB   → 約2GB（設定通り！）
 
-# CPUコア数確認
-cat /proc/cpuinfo | grep processor
-# 出力例
-processor       : 0
-processor       : 1           → 0〜1で2コア（設定通り！）
+           # CPUコア数確認
+           cat /proc/cpuinfo | grep processor
+           # 出力例
+           processor       : 0
+           processor       : 1           → 0〜1で2コア（設定通り！）
 
 ```
 
@@ -99,5 +99,25 @@ processor       : 1           → 0〜1で2コア（設定通り！）
 　Windows Updateの処理が完了していないのが原因の可能性があるので<br>
 　Updateを完了させる<br>
  
-　参考サイト：[Windows Update が完了しているか確認する方法](https://f-security.jp/v6/support/faq/200101.html)
+　参考サイト：[Windows Update が完了しているか確認する方法](https://f-security.jp/v6/support/faq/200101.html)<br>
 　
+
+## ❇️症状２
+```
+           指定されたサービスは無効であるか、または有効なデバイスが関連付けられていないため、開始できません。
+           エラー コード: Wsl/0x80070422　
+```
+
+　WSL復旧のための再インストールを実行しても上記エラーメッセージが出て復旧が出来ない<br>
+
+### ❓エラー内容
+　これは WSLのバックグラウンドサービス（WSLService）が無効で起動できないことを示している<br>
+
+ ## ✅対処法
+### ・WSLServiceを有効にする
+　　ファイル名を指定して実行(Win + r)<br>
+　　　　　　　　　↓<br>
+　　services.mscを入力してOK<br>
+　　　　　　　　　↓<br>
+　　WSLServiceを右クリックしてプロパティからスタートアップの種類を`自動`にして適用する<br>
+    
