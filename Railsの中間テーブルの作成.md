@@ -137,7 +137,7 @@ has_and_belongs_to_many :posts
 　以上で中間テーブルの基本的な構築手順は完了です。あとは実装機能に合わせてコントローラー、モデル、ビューの編集をします。<br>
 
 
-### 🥉中間テーブルにモデルを後付けする方法<br>
+### 🥉中間テーブルにモデルを後付けする方法（既存のテーブルをそのまま使う）<br>
 　モデル無しの設定の時、後で関係に追加の情報（属性）を持たせたくなった等のモデル有のメリットを採用したくなった場合に<br>
 　後付けでモデルを追加する方法を解説する。<br>
 
@@ -156,7 +156,7 @@ PostsTag：既存テーブル posts_tags に対応するモデル名（Railsの�
 ```
 
 　次にモデル無しからモデル有になったのでモデル同士のアソシエーション設定を忘れずに変更します。<br>
-　‼️has_and_belongs_to_many → has_many :through にモデルアソシエーションを切り替えること<br>　
+　※ このタイミングでアソシエーションを`has_many :through`に変更することを忘れずに。br>　
  
 ```
 #モデル無しの場合のアソシエーション
@@ -189,6 +189,19 @@ validates :tag_id, uniqueness: { scope: :post_id }   #<=postとtagの組み合�
 アソシエーションも has_many :through に切り替え可能
 ```
 　とすることが出来ます。<br>
+ <br>
+　`create_join_table`で生成された中間テーブルには`id`カラムがないため、後付けモデルでは主キーのないモデルとして扱われます。<br>
+　そのため`update`や`destroy`に制限が出る場合があります。必要であれば別途`add_column :id`などで`ID`を付与することも可能です。<br>
+ <br>
+　Railsの ActiveRecord は、基本的に1つの主キー（通常は id）があることを前提に動いているので<br>
+　主キーがないと…<br>
+ ```
+・PostsTag.find(1) みたいな「idで探す」操作ができない
+・update, destroy, dependent: :destroy など一部のメソッドがうまく動かないことがある
+・バリデーションやフォームの扱いで、id による参照がないと混乱することがある
+```
+　という問題が発生する可能性があります。<br>
+ <br>
 　また、中間テーブルに属性(カラム)を追加するには<br>
 ```
 docker compose exec web rails generate migration AddRoleToPostsTags role:string
