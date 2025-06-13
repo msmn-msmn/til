@@ -130,11 +130,145 @@ has_and_belongs_to_many :tags
 # tag.rb
 has_and_belongs_to_many :posts
 ```
-　モデル無しの場合の設定の場合、モデル間の依存関係が設定できないのでdependent: :destroyが使えず<br>
+　モデル無しの設定の場合、モデル間の依存関係が設定できないのでdependent: :destroyが使えず<br>
 　同様の機能を実装するためにはカスタムメソッドを作成する必要がある。<br>
 　また、この状態から中間テーブルにモデルを後付けすることも可能です。<br>
 
+　以上で中間テーブルの基本的な構築手順は完了です。あとは実装機能に合わせてコントローラー、モデル、ビューの編集をします。<br>
+
 
 ### 🥉中間テーブルにモデルを後付けする方法<br>
+　モデル無しの設定の時、後で関係に追加の情報（属性）を持たせたくなった等のモデル有のメリットを採用したくなった場合に<br>
+　後付けでモデルを追加する方法を解説する。<br>
 
-　以上で中間テーブルの基本的な構築手順は完了です。あとは実装機能に合わせてコントローラー、モデル、ビューの編集をします。<br>
+　
+
+
+### 　***作成手順*** 
+　例えば、すでに posts_tags テーブル（create_join_table :posts, :tags により生成）が存在している場合、次のようにします。<br>
+　まずは中間テーブルに対応したモデル名をモデルをマイグレーション無しのオプションで作成します。<br>
+ <br>
+```
+docker compose exec web rails generate model PostsTag --skip-migration
+
+PostsTag：既存テーブル posts_tags に対応するモデル名（Railsの規約：スネークケース→キャメルケース）
+--skip-migration：マイグレーションファイルを生成せず、app/models/posts_tag.rb だけを作成
+```
+
+　次にモデル無しからモデル有になったのでモデル同士のアソシエーション設定を忘れずに変更します。<br>
+　‼️has_and_belongs_to_many → has_many :through にモデルアソシエーションを切り替えること<br>　
+ 
+```
+#モデル無しの場合のアソシエーション
+# post.rb
+has_and_belongs_to_many :tags
+
+# tag.rb
+has_and_belongs_to_many :posts
+
+
+
+#モデル有の場合のアソシエーション     #<=こちらの設定に変更する
+# post.rb
+has_many :posts_tags
+has_many :tags, through: :posts_tags   #<=through: :posts_tagsで中間テーブルを通してやり取りするとRailsに伝えている
+
+# tag.rb
+has_many :posts_tags
+has_many :posts, through: :posts_tags   #<=through: :posts_tagsで中間テーブルを通してやり取りするとRailsに伝えている
+
+# posts_tag.rb ←中間モデル
+belongs_to :post
+belongs_to :tag
+validates :tag_id, uniqueness: { scope: :post_id }   #<=postとtagの組み合わせの一意性を守るためにバリデーションを追加
+```
+　この方法なら：<br>
+```
+既存の中間テーブルやそのデータはそのまま維持
+モデルにバリデーションやメソッドを追加可能
+アソシエーションも has_many :through に切り替え可能
+```
+　とすることが出来ます。<br>
+　また、中間テーブルに属性(カラム)を追加するには<br>
+```
+docker compose exec web rails generate migration AddRoleToPostsTags role:string
+
+Role:追加したいカラム名
+PostsTags:カラムを追加したいテーブル名
+role:データ型
+```
+　とカラム名を追加するマイグレーションを発行します。<br>
+　発行されたマイグレーションファイルの中身は<br>
+ ```
+# db/migrate/XXXXXXXXXXXXXX_add_role_to_posts_tags.rb
+class AddRoleToPostsTags < ActiveRecord::Migration[6.1]
+  def change
+    add_column :posts_tags, :role, :string
+  end
+end
+```
+　となります。これを<br>
+ ```
+　　　　docker compose exec web rails db:migrate
+```
+　でマイグレートを実行して属性(カラム)追加完了です。<br>
+
+ 
+### 　***補足として*** 
+　後付けではないが、開発段階でデータは消えてもいいから設計自体をやり直したい時の方法を紹介する。<br>
+　具体的には既にあるテーブルを削除して新たに任意のテーブルを作成します。<br>
+ <br>
+ ◎マイグレーションファイル削除の手順<br>
+ 　・まず現状のマイグレーションを確認します。<br>
+```
+docker compose exec web rails db:migrate:status
+
+#結果
+ Status   Migration ID    Migration Name
+--------------------------------------------------
+   up     20210707021252  Create users
+   up     20210707021454  Create profiles
+   up     20210707041601  Create posts
+   up     20210709035845  Create comments
+   up     20250610045201  Create tags
+   up     20250610051747  Create join table　　　<=これを削除したい
+```
+
+　・次に削除したいファイルのステータスをdownにする<br>
+```
+docker compose exec web rails db:migrate:down VERSION=20250610051747
+
+VERSION=20250610051747はdownさせたいファイルのMigration IDを指定する。
+```
+
+　・downしているか確認<br>
+```
+docker compose exec web rails db:migrate:status
+
+#結果
+ Status   Migration ID    Migration Name
+--------------------------------------------------
+   up     20210707021252  Create users
+   up     20210707021454  Create profiles
+   up     20210707041601  Create posts
+   up     20210709035845  Create comments
+   up     20250610045201  Create tags
+  down    20250610051747  Create join table
+```
+
+　・downしたマイグレーションファイルの削除<br>
+```
+rm db/migrate/20250610051747_create_join_table.rb
+
+#結果
+ Status   Migration ID    Migration Name
+--------------------------------------------------
+   up     20210707021252  Create users
+   up     20210707021454  Create profiles
+   up     20210707041601  Create posts
+   up     20210709035845  Create comments
+   up     20250610045201  Create tags
+```
+　‼️注意<br>
+ 　・必ずdownさせてから削除する<br>
+ 　・Migration IDの指定を間違えないように注意する<br>
