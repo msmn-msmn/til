@@ -18,9 +18,18 @@ namespace と依存関係：整理に有用で環境読み込み依存も可能�
 Rails標準：Rakefile または lib/tasks/*.rake<br>
 
 Rakefile は全ファイルを読み込み、独自タスクは lib/tasks/ に配置するのが一般的です 。<br>
-
+<br>
+## タスクファイルの作成
+まずは処理を記述するタスクファイルを作成します。<br>
+```
+$ rails g task ファイル名
+```
+作成したファイルの中に処理を記述することで定義が出来ます。<br>
+<br>
 ## 基本構文
 ```
+#lib/tasks/*.rake
+
 desc "タスクの説明"
 task :タスク名 => :environment do
   # 処理内容
