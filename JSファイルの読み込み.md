@@ -1,6 +1,6 @@
 # ★RailsにJSファイルを読込させる方法
 JavaScriptをRailsで読み込む方法を解説していく。
-やり方としてはRails7のImportmap形式の場合となる。
+やり方としてはRails7のesbuild形式の場合となる。
 
 
 ## 目標
