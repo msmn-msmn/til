@@ -10,5 +10,199 @@ Pundit を使うと、ざっくり以下のことができるようになりま�
 ```
 こんな感じで、認可ロジックをスッキリ分離＆自動化できるのが Pundit の強みです。
 
+公式ドキュメント：https://github.com/varvet/pundit
 
 ## ❇️使い方
+１．gem導入
+Gemfile に記述
+```
+gem 'pundit'
+```
+bundle install実行
+```
+bundle install
+```
+
+
+２．使い方
+利用したいコントローラーの継承元で Pundit を include
+```
+# app/controllers/application_controller.rb
+class ApplicationController < ActionController::API
+  include Pundit::Authorization          <=追記
+end
+```
+
+generator 実行。
+```
+rails g pundit:install
+```
+これで、app/policies/配下に application_policy.rb というファイルが作成される。
+```
+# application_policy.rb
+class ApplicationPolicy
+  attr_reader :user, :record
+
+  def initialize(user, record)
+    @user = user
+    @record = record
+  end
+
+ # デフォルトでは全て拒否（子クラスで必要なアクションだけオーバーライド）
+  def index?
+    false
+  end
+end
+
+# ポリシースコープを返すヘルパーメソッド
+def scope
+    Pundit.policy_scope!(user, record.class)
+  end
+
+ # policy_scope(Model) が呼ぶネストクラス
+  class Scope
+    attr_reader :user, :scope
+
+    def initialize(user, scope)
+      @user = user           # current_user
+      @scope = scope         # Model クラスや Relation
+    end
+
+    def resolve
+      scope                  # <- ここで「どのレコード一覧を返すか」を指定する(scopeの場合は全件返す）
+    end
+  end
+```
+`user`は`currnet_user`を参照し`record`は権限チェックの対象として指定したモデルオブジェクトを参照する。
+チェック対象モデルを追加するにはapp/policies/配下に`モデル名_policy.rb`を追加します。
+　
+```
+ def index?
+    false
+ end
+```
+これは、Pundit が「index アクションに対して必ず拒否してください」というポリシーの定義です。
+`false`を返すので、コントローラで`authorize`や`policy_scope`を呼んだ瞬間に`Pundit::NotAuthorizedError`が発生します.。
+
+✅def scopeについて
+・user には current_user（認証済みユーザー）が入っています。
+・record.class は「このポリシーが紐づくモデルのクラス」（たとえば Post や Author）を指しています。
+
+つまり、`Pundit.policy_scope!(user, record.class)` は、
+そのユーザーがそのモデル全体に対して「許可情報に基づいて、実際にユーザーがアクセス可能なレコード一覧」を返す仕組みです。
+使用例としては
+```
+class PostPolicy < ApplicationPolicy
+ def show?
+    # post が、scope（＝許可された一覧）の中にあるかをチェックしたい…
+    scope.exists?(record.id)
+  end
+
+private
+
+  # ヘルパーとして定義しておくと便利
+  def scope
+    Pundit.policy_scope!(user, record.class)
+  end
+end
+```
+
+ ✅def resolveについて
+ resolve メソッドは Pundit の “スコープ機能” の心臓部分です。ざっくり言うと、コントローラで
+ ```
+@records = policy_scope(Model)
+```
+と呼んだときに、実際にどのレコードを取り出すか を決めるのが resolve の仕事です。
+ ・scope をそのまま返す（resolve; scope）と、絞り込みなしで全件が許可される動きになります。
+ ・逆に「管理者なら全件・それ以外は公開済みだけ」といった条件を加えたいときは、この中身を変更します。
+ 使用例
+ ```
+def resolve
+      if user.admin?
+        scope.all                   # 管理者は全件
+      else
+        scope.where(published: true)  # それ以外は公開済みだけ
+      end
+    end
+```
+
+### ❇️ポリシーファイルの継承について
+最初にapplication_policy.rbに各アクションに対する設定を書いた場合
+```
+class ApplicationPolicy
+  attr_reader :user, :record
+
+  def initialize(user, record)
+    @user = user
+    @record = record
+  end
+
+  def index?
+    false
+  end
+
+  def show?
+    false
+  end
+
+　def scope
+    Pundit.policy_scope!(user, record.class)
+  end
+
+  class Scope
+    attr_reader :user, :scope
+
+    def initialize(user, scope)
+      @user = user
+      @scope = scope
+    end
+
+    def resolve
+      scope
+    end
+  end
+end
+```
+app/models/user_policy.rbにそれを継承すると
+```
+class UserPolicy < ApplicationPolicy
+end
+```
+モデルファイル等の継承と同様に継承元の設定が適用されて上記の状態でclass ApplicationPolicyと同様の処理をします。
+継承先で処理を変化させたい場合は
+```
+class UserPolicy < ApplicationPolicy
+# index アクションだけ管理者に許可したい場合
+  def index?
+    user.admin?
+  end
+ # その他のメソッドは ApplicationPolicy の定義（false）が適用される
+end
+```
+このように継承元 で「まず全て拒否」を書き
+子クラス では「許可したいものだけ」をオーバーライド
+こうすると、どのアクションが許可対象かがひと目で分かり、メンテナンス性も向上します。
+　
+　
+### ✅チェックをスキップする方法
+チェック自体をしないようにするには
+コントローラで authorize／policy_scope を 呼ばない
+それでも verify_authorized／verify_policy_scoped が動いてしまう場合は、
+```
+skip_authorization      # authorize をスキップ
+skip_policy_scope       # policy_scope をスキップ
+```
+をアクション内に書いてチェックを完全に無効化します。
+
+
+
+
+
+
+
+
+
+
+
+
+
