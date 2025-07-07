@@ -200,7 +200,7 @@ skip_policy_scope       # policy_scope をスキップ
 
 
 ### ❇️権限チェックを自動実行
-次のように権限チェックをしたいコントローラのアクション内に
+次のように権限チェックをしたいコントローラのアクション内に<br>
 ```
 class User < ApplicationPolicy
 
@@ -209,10 +209,10 @@ class User < ApplicationPolicy
   end
 end
 ```
-`authorize モデル名` と記述します。
-こうすることでモデル名から参照すべきポリシーファイルが推測されて、ファイル内のアクションに対する
-設定が適用されます。
-user_policyの記述が次の場合
+`authorize モデル名` と記述します。<br>
+こうすることでモデル名から参照すべきポリシーファイルが推測されて、ファイル内のアクションに対する<br>
+設定が適用されます。<br>
+user_policyの記述が次の場合<br>
 ```
 class UserPolicy < ApplicationPolicy
 # index アクションだけ管理者に許可したい場合
@@ -222,8 +222,8 @@ class UserPolicy < ApplicationPolicy
  # その他のメソッドは ApplicationPolicy の定義（false）が適用される
 end
 ```
-authorize @user で user.admin? が呼ばれることになります。
-admin についてはユーザーモデルでenum機能を使い設定しておくと自動で読み込んでくれます。
+authorize @user で user.admin? が呼ばれることになります。<br>
+admin についてはユーザーモデルでenum機能を使い設定しておくと自動で読み込んでくれます。<br>
 
 
 
