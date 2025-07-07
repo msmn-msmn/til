@@ -199,6 +199,17 @@ skip_policy_scope       # policy_scope をスキップ
 をアクション内に書いてチェックを完全に無効化します。<br>
 
 
+### ❇️権限チェックを自動実行
+次のように権限チェックをしたいコントローラのアクション内に
+```
+class UserPolicy < ApplicationPolicy
+
+  def index?
+    authorize @user
+  end
+end
+```
+`authorize モデル名` と記述します。
 
 
 
