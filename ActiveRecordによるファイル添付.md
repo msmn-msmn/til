@@ -21,7 +21,7 @@ bootstrap：https://getbootstrap.jp/docs/5.3/getting-started/introduction/
 <br>
 
 ### 1️⃣モデルファイルに_attachedを追加
-app\validators\attachment_validator.rbを編集<br>
+app\models\site.rbを編集<br>
 ```
 # == Schema Information
 #
@@ -64,3 +64,27 @@ maximum:は添付できる最大のファイルサイズの設定。<br>
 
 
 ### 2️⃣コントローラーファイルに削除メソッドとストロングパラメーターを追加
+app\controllers\admin\sites_controller.rbを編集
+```
+def og_image_clear
+    authorize(@site)
+
+    @site.og_image.purge
+    redirect_to edit_admin_site_path(@site)
+  end
+
+  def favicon_clear
+    authorize(@site)
+
+    @site.favicon.purge
+    redirect_to edit_admin_site_path(@site)
+  end
+
+  def main_images_clear
+    authorize(@site)
+
+    attachment = @site.main_images.find(params[:blob_id])
+    attachment.purge
+    redirect_to edit_admin_site_path(@site)
+  end
+```
