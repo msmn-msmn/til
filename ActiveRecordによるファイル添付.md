@@ -64,7 +64,7 @@ maximum:は添付できる最大のファイルサイズの設定。<br>
 
 
 ### 2️⃣コントローラーファイルに削除メソッドとストロングパラメーターを追加
-app\controllers\admin\sites_controller.rbを編集
+app\controllers\admin\sites_controller.rbに削除メソッドを追加。
 ```
 def og_image_clear
     authorize(@site)
@@ -88,3 +88,13 @@ def og_image_clear
     redirect_to edit_admin_site_path(@site)
   end
 ```
+app\controllers\admin\sites_controller.rbのストロングパラメーターに項目を追加。
+```
+private
+
+  def site_params
+    params.require(:site).permit(:name, :subtitle, :description, :favicon, :og_image, main_images: [])
+  end
+```
+***❓main_images: []だけ配列の理由***
+has_many_attached で複数の添付を可能にした場合、
