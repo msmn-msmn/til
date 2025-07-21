@@ -56,13 +56,16 @@ end
    has_many_attached :main_images
 ```
 を追加する。<br>
-has_one_attachedは添付ファイルが一つの時に使用。<br>
-has_many_attached :main_imagesはファイルを複数添付したい時に使用。<br>
-purge: trueはバリデーションエラーが発生した場合、その添付ファイルを自動で削除する。<br>
-content_type:は添付できるファイル形式の設定。<br>
-maximum:は添付できる最大のファイルサイズの設定。<br>
+```
+has_one_attachedは添付ファイルが一つの時に使用。
+has_many_attached :main_imagesはファイルを複数添付したい時に使用。
+purge: trueはバリデーションエラーが発生した場合、その添付ファイルを自動で削除する。
+content_type:は添付できるファイル形式の設定。
+maximum:は添付できる最大のファイルサイズの設定。
+```
 <br>
 <br>
+
 ### 2️⃣コントローラーファイルに削除メソッドとストロングパラメーターを追加<br>
 app\controllers\admin\sites_controller.rbに削除メソッドを追加。<br>
 ```
