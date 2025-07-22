@@ -131,9 +131,24 @@ subject:送信するメールの件名になります。
 
 　　　　本サイトにユーザー登録いただきありがとうございます。
 ```
-　　　　なお、インスタンス変数（@userと@url）は、HTMLテンプレートとテキストテンプレートの両方で利用可能になります。<br>
-　　　　これで、mailメソッドを呼び出せば、Action Mailerは2種類のテンプレート（テキストおよびHTML）を探索して、<br>
-　　　　multipart/alternative形式のメールを自動生成します。<br>
+なお、インスタンス変数（@userと@url）は、HTMLテンプレートとテキストテンプレートの両方で利用可能になります。<br>
+これで、mailメソッドを呼び出せば、Action Mailerは2種類のテンプレート（テキストおよびHTML）を探索して、<br>
+multipart/alternative形式のメールを自動生成します。<br>
+<br>
+また、text.erbファイル内でeach文などのRubyのコードが書けるので、配列やコレクションをループ処理して、<br>
+メールの内容を動的に生成することも可能です。<br>
+```
+公開済の記事件数: <%= @total %>件
+<% if @@yesterday_count.any? %>
+昨日公開された記事数: <%= @yesterday_count %>件
+<% @yesterday_titles.each do |article| %>
+タイトル: <%= article.title %>
+<% end %>
+<% else %>
+昨日公開された記事はありません。
+<% end %>
+```
+    
 
 ## 　　4.動作確認
 　　　　ここまで来たら、rails console からメール送信のメソッドを実行してみます。<br>
