@@ -31,7 +31,7 @@ $ rails g task ファイル名
 #lib/tasks/*.rake
 
 desc "タスクの説明"
-task :タスク名 => :environment do
+task タスク名:  :environment do
   # 処理内容
 end
 ```
