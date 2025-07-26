@@ -47,3 +47,28 @@ joins内でネストすることにより直接の関係がないテーブルも
 Orders.joins(:users, :payments)
 ```
 のように複数結合することもできる。<br>
+
+
+## ✅テーブルの情報を選択表示する
+Productsテーブルに<br>
+```
+id PK
+name
+price
+```
+のカラムが存在するときに id と name だけ取得して表示したい場合を考える。<br>
+この場合に使用するのが select メソッドになる。<br>
+
+### 構文
+```
+Products.select(:id, :name)
+```
+こう書くことで id と name のカラム情報だけ取得できる。<br>
+<br>
+
+注意すべきは次のように<br>
+```
+Products.select(:id, :name).first.price
+```
+と書いた場合には id と name のカラム情報しか取得していないため price の値は取得できないことである。<br>
+
