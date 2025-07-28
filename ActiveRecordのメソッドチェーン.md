@@ -93,3 +93,45 @@ User.pluck(:name)
 ```
 Model.group(:カラム名)
 ```
+
+よく一緒に使うメソッド：<br>
+| メソッド            | 意味         |
+| --------------- | ---------- |
+| `sum(:カラム)`     | グループごとの合計  |
+| `count`         | グループごとの件数  |
+| `average(:カラム)` | グループごとの平均値 |
+| `maximum(:カラム)` | グループごとの最大値 |
+
+使用例：<br>
+例：ケーキ注文アプリ<br>
+```
+class Order < ApplicationRecord
+  # columns: id, user_id, item_name, price
+end
+```
+ユーザーごとの注文金額合計を出したいとき👇<br>
+```
+Order.group(:user_id).sum(:price)
+```
+<br>
+
+🧾 出力結果（ハッシュ）：<br>
+```
+{
+  1 => 1200,
+  2 => 3000,
+  3 => 450
+}
+```
+☝️ user_idごとにグループ化し、各グループで合計金額（price）を算出しています。<br>
+このようにgroup に sum や count などの 集計メソッドをチェーンしたときの返り値はハッシュ形式になります。
+<br>
+<br>
+<br>
+💡 補足：複数カラムでグループ化もできる！<br>
+```
+Order.group(:user_id, :item_name).sum(:price)
+```
+→ ユーザー × 商品ごとの合計金額が出せる！<br>
+
+
