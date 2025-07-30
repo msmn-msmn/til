@@ -86,6 +86,32 @@ User.pluck(:name)
 ☝️ つまり select は「モデル情報を保持したまま」、pluck は「値だけ取り出す」。<br>
 <br>
 <br>
+### ハッシュ形式の場合
+以下の配列の場合<br>
+```
+users = [
+  {
+    name: 'A',
+    role: 'general'
+  },
+  {
+    name: 'B',
+    role: 'general'
+  },
+  {
+    name: 'C',
+    role: 'admin'
+  }
+]
+```
+ここから general のnameのみを取り出す場合は<br>
+```
+name = users.select{ |user| user[:role] == 'general' }
+```
+というふうに書く。<br>
+<br>
+<br>
+
 ## ✅共通の値でまとめて、グループごとに集計したいとき
 グループごとに集計したいときは group メソッドを使用します。<br>
 <br>
