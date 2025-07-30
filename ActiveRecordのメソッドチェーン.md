@@ -66,13 +66,13 @@ Products.select(:id, :name)
 こう書くことで id と name のカラム情報だけ取得できる。<br>
 <br>
 
-⚠️ 注意点<br>
+### ⚠️ 注意点<br>
 .select で取得しなかったカラムは、ActiveRecordオブジェクト上でも使えません。<br>
 
 例： User.select(:id).first.name は nil になるかエラーになります（nameを取ってきていないから）。<br>
 <br>
 <br>
-🧩 .pluck との違い<br>
+### 🧩 .pluck との違い<br>
 ```
 User.select(:name)
 ```
